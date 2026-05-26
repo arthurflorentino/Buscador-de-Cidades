@@ -77,7 +77,7 @@ class DupCmd(CmdBase):
         # Se o usuário digitou um nome específico, busca as ocorrências dele
         if alvo:
             # Busca exata (ignorando maiúsculas e minúsculas)
-            exatas = [c for c in self.repo.todas() if c['nome'].lower() == alvo.lower()]
+            exatas = [c for c in self.repo.todas() if alvo.lower() in c['nome'].lower()]
             return {"alvo": alvo, "quantidade": len(exatas), "ocorrencias": exatas}
             
         # Comportamento antigo (fallback): se não enviar nome, lista todas as repetidas
