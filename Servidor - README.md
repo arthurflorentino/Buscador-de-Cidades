@@ -26,5 +26,5 @@ classDiagram
     ICommand --> Proxy : acessa dados
     ICommand <|-- DistanciaCmd
     ICommand <|-- CoordCmd
-    ICommand <|-- DupCmd
+    ICommand <|-- InfoCmd
     ICommand <|-- ProxCmd
