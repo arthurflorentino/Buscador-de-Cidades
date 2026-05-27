@@ -7,16 +7,16 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
 
 MAPA_UFS = {
     '11': 'RO', '12': 'AC', '13': 'AM', '14': 'RR', '15': 'PA', '16': 'AP', '17': 'TO',
-    '21': 'MA', '22': 'PI', '23': 'CE', '24': 'RN', '25': 'PB', '26': 'PE', '27': 'AL', 
-    '28': 'SE', '29': 'BA', '31': 'MG', '32': 'ES', '33': 'RJ', '35': 'SP', '41': 'PR', 
-    '42': 'SC', '43': 'RS', '50': 'MS', '51': 'MT', '52': 'GO', '53': 'DF'
+    '21': 'MA', '22': 'PI', '23': 'CE', '24': 'RN', '25': 'PB', '26': 'PE', '27': 'AL', '28': 'SE', '29': 'BA',
+    '31': 'MG', '32': 'ES', '33': 'RJ', '35': 'SP',
+    '41': 'PR', '42': 'SC', '43': 'RS',
+    '50': 'MS', '51': 'MT', '52': 'GO', '53': 'DF'
 }
 
 # --- PADRÃO FACADE ---
 class APIFacade:
     def call(self, op, **p):
         op_api = op.lower()
-        # Mapeia a busca de 'informacoes' para o endpoint 'duplicadas' do servidor backend
         if op_api == 'informacoes':
             op_api = 'duplicadas'
             
@@ -43,11 +43,11 @@ class BuscadorCidadesGUI(QMainWindow):
 
         self.tabs = QTabWidget()
         self.tab_distancia = QWidget()
-        self.tab_informacoes = QWidget() # Alterado de tab_duplicadas para tab_informacoes
+        self.tab_informacoes = QWidget()
         self.tab_proximas = QWidget()
 
         self.tabs.addTab(self.tab_distancia, "Distância")
-        self.tabs.addTab(self.tab_informacoes, "Informações") # Nome da aba alterado
+        self.tabs.addTab(self.tab_informacoes, "Informações")
         self.tabs.addTab(self.tab_proximas, "Próximas")
 
         main_layout.addWidget(self.tabs)
@@ -97,7 +97,7 @@ class BuscadorCidadesGUI(QMainWindow):
         self.alvo_input.setPlaceholderText("Nome do município (ex: São Pedro)")
         layout.addWidget(self.alvo_input)
 
-        btn_buscar = QPushButton("Buscar Informações") # Nome do botão alterado
+        btn_buscar = QPushButton("Buscar Informações")
         btn_buscar.clicked.connect(self.buscar_informacoes)
         layout.addWidget(btn_buscar)
         
@@ -131,17 +131,11 @@ class BuscadorCidadesGUI(QMainWindow):
                 txt += f"\n🏙️ {c['nome']} - {sigla}\n"
                 
                 for chave, valor in sorted(c.items()):
-                    # Filtra e ignora o 'siafi_id' além dos campos padrões de controle
                     if chave.lower() not in ['nome', 'lat', 'lon', 'latitude', 'longitude', 'siafi_id']:
                         label = chave.replace('_', ' ').capitalize()
-                        
-                        # Converte 1 para Sim e 0 para Não no campo Capital
                         if chave.lower() == 'capital':
-                            valor_formatado = "Sim" if str(valor) == "1" else "Não"
-                            txt += f"    ↳ {label}: {valor_formatado}\n"
-                        else:
-                            txt += f"    ↳ {label}: {valor}\n"
-                            
+                            valor = "Sim" if str(valor) == "1" else "Não"
+                        txt += f"    ↳ {label}: {valor}\n"
                 txt += f"    ↳ Latitude: {c['lat']}\n"
                 txt += f"    ↳ Longitude: {c['lon']}\n"
                 
