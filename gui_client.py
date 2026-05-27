@@ -7,16 +7,19 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
 
 MAPA_UFS = {
     '11': 'RO', '12': 'AC', '13': 'AM', '14': 'RR', '15': 'PA', '16': 'AP', '17': 'TO',
-    '21': 'MA', '22': 'PI', '23': 'CE', '24': 'RN', '25': 'PB', '26': 'PE', '27': 'AL', '28': 'SE', '29': 'BA',
-    '31': 'MG', '32': 'ES', '33': 'RJ', '35': 'SP',
-    '41': 'PR', '42': 'SC', '43': 'RS',
-    '50': 'MS', '51': 'MT', '52': 'GO', '53': 'DF'
+    '21': 'MA', '22': 'PI', '23': 'CE', '24': 'RN', '25': 'PB', '26': 'PE', '27': 'AL', 
+    '28': 'SE', '29': 'BA', '31': 'MG', '32': 'ES', '33': 'RJ', '35': 'SP', '41': 'PR', 
+    '42': 'SC', '43': 'RS', '50': 'MS', '51': 'MT', '52': 'GO', '53': 'DF'
 }
 
 # --- PADRÃO FACADE ---
 class APIFacade:
     def call(self, op, **p):
         op_api = op.lower()
+        # Mapeia a busca de 'informacoes' para o endpoint 'duplicadas' do servidor backend
+        if op_api == 'informacoes':
+            op_api = 'duplicadas'
+            
         url = f"http://127.0.0.1:5555/{op_api}?{urllib.parse.urlencode(p)}"
         try:
             with urllib.request.urlopen(url) as r: 
@@ -40,17 +43,17 @@ class BuscadorCidadesGUI(QMainWindow):
 
         self.tabs = QTabWidget()
         self.tab_distancia = QWidget()
-        self.tab_duplicadas = QWidget()
+        self.tab_informacoes = QWidget() # Alterado de tab_duplicadas para tab_informacoes
         self.tab_proximas = QWidget()
 
         self.tabs.addTab(self.tab_distancia, "Distância")
-        self.tabs.addTab(self.tab_duplicadas, "Duplicadas")
+        self.tabs.addTab(self.tab_informacoes, "Informações") # Nome da aba alterado
         self.tabs.addTab(self.tab_proximas, "Próximas")
 
         main_layout.addWidget(self.tabs)
 
         self.setup_tab_distancia()
-        self.setup_tab_duplicadas()
+        self.setup_tab_informacoes()
         self.setup_tab_proximas()
 
     def setup_tab_distancia(self):
@@ -67,7 +70,6 @@ class BuscadorCidadesGUI(QMainWindow):
         btn_calc.clicked.connect(self.calcular_distancia)
         layout.addWidget(btn_calc)
         
-        # Faz o Enter funcionar nos campos de texto
         self.origem_input.returnPressed.connect(self.calcular_distancia)
         self.destino_input.returnPressed.connect(self.calcular_distancia)
 
@@ -89,33 +91,32 @@ class BuscadorCidadesGUI(QMainWindow):
             txt = f"📍 Origem: {res.get('origem')}\n📍 Destino: {res.get('destino')}\n🚗 Distância: {res.get('distancia_km')} km"
             self.result_distancia.setText(txt)
 
-    def setup_tab_duplicadas(self):
+    def setup_tab_informacoes(self):
         layout = QVBoxLayout()
         self.alvo_input = QLineEdit()
         self.alvo_input.setPlaceholderText("Nome do município (ex: São Pedro)")
         layout.addWidget(self.alvo_input)
 
-        btn_buscar = QPushButton("Buscar Município")
-        btn_buscar.clicked.connect(self.buscar_duplicadas)
+        btn_buscar = QPushButton("Buscar Informações") # Nome do botão alterado
+        btn_buscar.clicked.connect(self.buscar_informacoes)
         layout.addWidget(btn_buscar)
         
-        # Faz o Enter funcionar no campo de texto
-        self.alvo_input.returnPressed.connect(self.buscar_duplicadas)
+        self.alvo_input.returnPressed.connect(self.buscar_informacoes)
 
-        self.result_duplicadas = QTextEdit()
-        self.result_duplicadas.setReadOnly(True)
-        layout.addWidget(self.result_duplicadas)
-        self.tab_duplicadas.setLayout(layout)
+        self.result_informacoes = QTextEdit()
+        self.result_informacoes.setReadOnly(True)
+        layout.addWidget(self.result_informacoes)
+        self.tab_informacoes.setLayout(layout)
 
-    def buscar_duplicadas(self):
+    def buscar_informacoes(self):
         alvo = self.alvo_input.text().strip()
         if not alvo:
             QMessageBox.warning(self, "Aviso", "Preencha o nome do município.")
             return
 
-        res = self.facade.call('duplicadas', nome=alvo)
+        res = self.facade.call('informacoes', nome=alvo)
         if "erro" in res:
-            self.result_duplicadas.setText(f"⚠️ Erro: {res['erro']}")
+            self.result_informacoes.setText(f"⚠️ Erro: {res['erro']}")
             return
             
         qtd = res.get('quantidade', 0)
@@ -130,13 +131,21 @@ class BuscadorCidadesGUI(QMainWindow):
                 txt += f"\n🏙️ {c['nome']} - {sigla}\n"
                 
                 for chave, valor in sorted(c.items()):
-                    if chave.lower() not in ['nome', 'lat', 'lon', 'latitude', 'longitude']:
+                    # Filtra e ignora o 'siafi_id' além dos campos padrões de controle
+                    if chave.lower() not in ['nome', 'lat', 'lon', 'latitude', 'longitude', 'siafi_id']:
                         label = chave.replace('_', ' ').capitalize()
-                        txt += f"    ↳ {label}: {valor}\n"
+                        
+                        # Converte 1 para Sim e 0 para Não no campo Capital
+                        if chave.lower() == 'capital':
+                            valor_formatado = "Sim" if str(valor) == "1" else "Não"
+                            txt += f"    ↳ {label}: {valor_formatado}\n"
+                        else:
+                            txt += f"    ↳ {label}: {valor}\n"
+                            
                 txt += f"    ↳ Latitude: {c['lat']}\n"
                 txt += f"    ↳ Longitude: {c['lon']}\n"
                 
-        self.result_duplicadas.setText(txt)
+        self.result_informacoes.setText(txt)
 
     def setup_tab_proximas(self):
         layout = QVBoxLayout()
@@ -157,7 +166,6 @@ class BuscadorCidadesGUI(QMainWindow):
         btn_proximas.clicked.connect(self.buscar_proximas)
         layout.addWidget(btn_proximas)
         
-        # Faz o Enter funcionar nos três campos de texto
         self.lat_input.returnPressed.connect(self.buscar_proximas)
         self.lon_input.returnPressed.connect(self.buscar_proximas)
         self.raio_input.returnPressed.connect(self.buscar_proximas)
