@@ -1,13 +1,19 @@
 # -*- coding: utf-8 -*-
 import urllib.request, urllib.parse, json
 
+MAPA_UFS = {
+    '11': 'RO', '12': 'AC', '13': 'AM', '14': 'RR', '15': 'PA', '16': 'AP', '17': 'TO', '21': 'MA',
+    '22': 'PI', '23': 'CE', '24': 'RN', '25': 'PB', '26': 'PE', '27': 'AL', '28': 'SE', '29': 'BA',
+    '31': 'MG', '32': 'ES', '33': 'RJ', '35': 'SP', '41': 'PR', '42': 'SC', '43': 'RS', '50': 'MS',
+    '51': 'MT', '52': 'GO', '53': 'DF'
+}
+
 # --- PADRÃO FACADE ---
 class APIFacade:
     def call(self, op, **p):
         op_api = op.lower()
-        # Se o usuário escolher 'informacoes', mapeia internamente para a rota 'duplicadas' do servidor
         if op_api == 'informacoes':
-            op_api = 'duplicadas'
+            op_api = 'duplicadas' # Mapeia para a rota do backend
             
         url = f"http://127.0.0.1:5555/{op_api}?{urllib.parse.urlencode(p)}"
         try:
@@ -16,7 +22,7 @@ class APIFacade:
         except Exception as e:
             return {"erro": str(e)}
 
-# --- INTERFACE (TELA DE TEXTO) ---
+# --- INTERFACE (TELA CLI) ---
 f = APIFacade()
 
 while True:
@@ -46,13 +52,13 @@ while True:
             print(f"📍 Destino: {res.get('destino')}")
             print(f"🚗 Distância: {res.get('distancia_km')} km")
 
-    elif op == 'informacoes': 
-        alvo = input("Digite o nome do município (ex: São Pedro): ")
+    elif op == 'informacoes':
+        alvo = input("Digite o nome do município (ex: São Pedro): ").strip()
         print("⏳ Consultando a base de dados, aguarde...\n")
         res = f.call(op, nome=alvo)
         
         if "erro" in res:
-            print(f"⚠️ Erro: {res['erro']}")
+            print(f"Erro: {res['erro']}")
         else:
             qtd = res.get('quantidade', 0)
             print(f"📊 O município '{alvo.title()}' aparece {qtd} vez(es) no Brasil.")
@@ -60,19 +66,20 @@ while True:
             if qtd > 0:
                 print("\n📍 Detalhes da(s) ocorrência(s) encontrada(s):")
                 for c in res.get('ocorrencias', []):
-                    print(f"\n   🏙️  {c['nome']}")
+                    cod_uf = str(c.get('codigo_uf', ''))
+                    sigla = MAPA_UFS.get(cod_uf, f"UF: {cod_uf}")
+                    print(f"\n   🏙️  {c['nome']} - {sigla}")
+                    
                     for chave, valor in sorted(c.items()):
-                        # Remove 'siafi_id' e os outros campos que não devem listar diretamente
-                        if chave.lower() not in ['nome', 'lat', 'lon', 'latitude', 'longitude', 'siafi_id'] and valor:
+                        # Remove o siafi_id da exibição
+                        if chave.lower() not in ['nome', 'lat', 'lon', 'latitude', 'longitude', 'siafi_id']:
                             label = chave.replace('_', ' ').capitalize()
                             
-                            # Tratamento especial para o campo Capital (Sim/Não)
+                            # Tratamento de Capital (Sim/Não)
                             if chave.lower() == 'capital':
-                                valor_formatado = "Sim" if str(valor) == "1" else "Não"
-                                print(f"       ↳ {label}: {valor_formatado}")
-                            else:
-                                print(f"       ↳ {label}: {valor}")
+                                valor = "Sim" if str(valor) == "1" else "Não"
                                 
+                            print(f"       ↳ {label}: {valor}")
                     print(f"       ↳ Latitude: {c['lat']}")
                     print(f"       ↳ Longitude: {c['lon']}")
 
@@ -88,7 +95,7 @@ while True:
             print(f"Erro: {res['erro']}")
         else:
             print(f"\nCidades num raio de {raio} km:")
-            for c in res[:15]: 
-                print(f"    objectivity  {c.get('dist')} km | {c.get('nome')}")
+            for c in res[:15]:
+                print(f"   🛣️  {c.get('dist')} km | {c.get('nome')}")
     else:
         print("\n⚠️ Comando inválido! Tente novamente.")
