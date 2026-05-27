@@ -1,6 +1,6 @@
 # Arquitetura do Servidor
 
-O servidor utiliza os padrões **Factory**, **Command** e **Proxy**.
+O servidor utiliza os padrões arquiteturais **Factory**, **Command** e **Proxy** para processar e isolar as regras de negócio de geolocalização de forma modular, limpa e performática.
 
 ```mermaid
 classDiagram
@@ -18,6 +18,7 @@ classDiagram
     class Proxy {
         <<Proxy>>
         +buscar(nome)
+        +todas()
     }
     
     FlaskServer --> CommandFactory : solicita comando
@@ -26,3 +27,4 @@ classDiagram
     ICommand <|-- DistanciaCmd
     ICommand <|-- CoordCmd
     ICommand <|-- DupCmd
+    ICommand <|-- ProxCmd
