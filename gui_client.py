@@ -66,6 +66,10 @@ class BuscadorCidadesGUI(QMainWindow):
         btn_calc = QPushButton("Calcular Distância")
         btn_calc.clicked.connect(self.calcular_distancia)
         layout.addWidget(btn_calc)
+        
+        # Faz o Enter funcionar nos campos de texto
+        self.origem_input.returnPressed.connect(self.calcular_distancia)
+        self.destino_input.returnPressed.connect(self.calcular_distancia)
 
         self.result_distancia = QTextEdit()
         self.result_distancia.setReadOnly(True)
@@ -94,6 +98,9 @@ class BuscadorCidadesGUI(QMainWindow):
         btn_buscar = QPushButton("Buscar Município")
         btn_buscar.clicked.connect(self.buscar_duplicadas)
         layout.addWidget(btn_buscar)
+        
+        # Faz o Enter funcionar no campo de texto
+        self.alvo_input.returnPressed.connect(self.buscar_duplicadas)
 
         self.result_duplicadas = QTextEdit()
         self.result_duplicadas.setReadOnly(True)
@@ -120,10 +127,8 @@ class BuscadorCidadesGUI(QMainWindow):
                 cod_uf = str(c.get('codigo_uf', ''))
                 sigla = MAPA_UFS.get(cod_uf, f"UF: {cod_uf}")
                 
-                # Formato aprimorado na UI: Nome - SIGLA
                 txt += f"\n🏙️ {c['nome']} - {sigla}\n"
                 
-                # Adiciona todos os atributos estendidos da cidade na caixa de texto
                 for chave, valor in sorted(c.items()):
                     if chave.lower() not in ['nome', 'lat', 'lon', 'latitude', 'longitude']:
                         label = chave.replace('_', ' ').capitalize()
@@ -151,6 +156,11 @@ class BuscadorCidadesGUI(QMainWindow):
         btn_proximas = QPushButton("Buscar Próximas")
         btn_proximas.clicked.connect(self.buscar_proximas)
         layout.addWidget(btn_proximas)
+        
+        # Faz o Enter funcionar nos três campos de texto
+        self.lat_input.returnPressed.connect(self.buscar_proximas)
+        self.lon_input.returnPressed.connect(self.buscar_proximas)
+        self.raio_input.returnPressed.connect(self.buscar_proximas)
 
         self.result_proximas = QTextEdit()
         self.result_proximas.setReadOnly(True)
