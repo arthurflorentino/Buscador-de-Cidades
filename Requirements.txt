@@ -1,0 +1,116 @@
+================================================================================
+          SISTEMA BUSCADOR DE CIDADES - MANUAL COMPLETO DE EXECUÇÃO
+================================================================================
+Este documento contém todos os requisitos, dependências e o passo a passo completo
+para configurar, instalar e executar todos os componentes do sistema (Servidor, 
+Cliente CLI, Cliente GUI e Testes Automatizados).
+
+--------------------------------------------------------------------------------
+1. REQUISITOS DO SISTEMA (DEPENDÊNCIAS)
+--------------------------------------------------------------------------------
+O sistema necessita do Python 3.8 ou superior instalado. As dependências externas 
+necessárias para o projeto rodar são:
+
+Flask==3.0.2
+PyQt5==5.15.10
+
+*Nota: As bibliotecas 'math', 'csv', 'unicodedata', 'sys', 'urllib', 'json' e 
+'unittest' são nativas do próprio Python e não precisam de instalação externa.*
+
+Para facilitar, você pode criar um arquivo chamado 'requirements.txt' apenas com:
+Flask==3.0.2
+PyQt5==5.15.10
+
+--------------------------------------------------------------------------------
+2. PASSO A PASSO DA CONFIGURAÇÃO INICIAL (INSTALAÇÃO)
+--------------------------------------------------------------------------------
+Abra o Prompt de Comando (CMD) ou PowerShell na pasta raiz do projeto onde estão 
+os arquivos e execute os seguintes comandos:
+
+Passo 2.1: Criar um Ambiente Virtual (Recomendado para organizar as bibliotecas)
+> python -m venv venv
+
+Passo 2.2: Ativar o Ambiente Virtual (No Windows)
+> venv\Scripts\activate
+*(Após ativar, o terminal mostrará '(venv)' no início da linha)*
+
+Passo 2.3: Atualizar o gerenciador de pacotes (pip)
+> python -m pip install --upgrade pip
+
+Passo 2.4: Instalar as Dependências Obrigatórias
+> pip install Flask PyQt5
+
+--------------------------------------------------------------------------------
+3. COMO EXECUTAR O SERVIDOR BACKEND (app.py)
+--------------------------------------------------------------------------------
+O Servidor Flask é o coração do sistema e deve SEMPRE ser iniciado primeiro, pois 
+as interfaces dependem dele para buscar as informações.
+
+Passo 3.1: Certifique-se de que o arquivo 'municipios.csv' está na mesma pasta.
+Passo 3.2: No terminal (com o venv ativo), execute:
+> python app.py
+
+Você verá uma mensagem de confirmação como esta:
+   ✅ SUCESSO: 5570 municípios carregados!
+   * Running on all addresses (0.0.0.0)
+   * Running on http://127.0.0.1:5555
+
+*IMPORTANTE: Deixe esse terminal aberto rodando o servidor. Para usar os clientes,
+abra um NOVO Prompt de Comando (CMD).*
+
+--------------------------------------------------------------------------------
+4. COMO EXECUTAR O CLIENTE TERMINAL CLI (client.py)
+--------------------------------------------------------------------------------
+Com o servidor já rodando em um terminal, abra um SEGUNDO terminal (CMD), 
+navegue até a pasta, ative o venv ('venv\Scripts\activate') e execute:
+
+> python client.py
+
+O menu textual interativo abrirá diretamente no terminal, permitindo digitar 
+as opções:
+- 'distancia' (Calcular distância entre duas cidades, ex: "sao paulo" e "bauru")
+- 'informacoes' (Ver dados detalhados e ocorrências de um município)
+- 'proximas' (Buscar cidades vizinhas por coordenadas de latitude/longitude)
+- 'sair' (Encerrar o programa)
+
+--------------------------------------------------------------------------------
+5. COMO EXECUTAR O CLIENTE GRÁFICO GUI (gui_client.py)
+--------------------------------------------------------------------------------
+Caso prefira utilizar a interface visual com janelas, abas e campos de texto:
+Com o servidor rodando, abra um terminal (CMD), ative o venv e execute:
+
+> python gui_client.py
+
+Uma janela profissional em PyQt5 será aberta contendo 3 abas estruturadas:
+- Aba 1: Distância (Permite calcular a distância pressionando o botão ou a tecla Enter)
+- Aba 2: Informações (Busca as ocorrências e exibe se é Capital [Sim/Não] sem expor IDs internos)
+- Aba 3: Próximas (Busca cidades em um raio geográfico específico)
+
+--------------------------------------------------------------------------------
+6. COMO EXECUTAR OS TESTES AUTOMATIZADOS (QUALIDADE E INTEGRAÇÃO)
+--------------------------------------------------------------------------------
+O projeto conta com suítes de testes automatizados completos para garantir a 
+integridade do código e dos padrões de projeto.
+
+Para rodar os Testes de Integração do Servidor (Valida endpoints e matemática):
+> python teste_integracao.py
+
+Para rodar os Testes de Interface Gráfica (Valida cliques, abas e usabilidade):
+> python teste_ui.py
+
+Você verá um relatório no terminal indicando se todos os testes passaram com sucesso.
+
+--------------------------------------------------------------------------------
+7. ESTRUTURA IDEAL DE ARQUIVOS NO GITHUB
+--------------------------------------------------------------------------------
+Certifique-se de realizar o upload dos seguintes arquivos estruturados:
+├── app.py                  <- Servidor Backend (Flask, Command, Factory, Proxy)
+├── client.py               <- Cliente CLI de Terminal (Facade)
+├── gui_client.py           <- Cliente Gráfico GUI (PyQt5)
+├── teste_integracao.py     <- Testes de Unidade/Integração do Backend
+├── teste_ui.py             <- Testes Automatizados da Interface Gráfica
+├── municipios.csv          <- Base de Dados Real dos Municípios Brasileiros
+├── Servidor - README.md    <- Documentação arquitetural do servidor
+├── Cliente - README.md     <- Documentação arquitetural do cliente
+└── README_REQUISITOS.txt   <- Este manual completo com os pré-requisitos
+================================================================================
