@@ -147,4 +147,4 @@ def api(comando):
 
 if __name__ == '__main__':
     print(f"✅ SUCESSO: {len(CIDADES)} municípios carregados na memória com dados completos!")
-    app.run(host='0.0.0.0', port=55
+    app.run(host='0.0.0.0', port=5555, debug=False)
