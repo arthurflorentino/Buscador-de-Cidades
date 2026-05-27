@@ -28,7 +28,7 @@ while True:
     print("               BUSCADOR DE CIDADES               ")
     print("="*50)
     print("Comandos disponíveis:")
-    print("▶ Distancia | Duplicadas | Proximas | Sair")
+    print("▶ Distância | Informações | Próximas | Sair")
     
     op = input("\nDigite o comando desejado: ").strip().lower()
 
