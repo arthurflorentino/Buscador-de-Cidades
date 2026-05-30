@@ -1,4 +1,4 @@
-# Projeto: Buscador de Cidades Inteligente
+# Projeto: Buscador de Cidades
 
 Sistema distribuído composto por um servidor backend (Flask) e dois clientes (CLI e interface gráfica em PyQt5) para processamento de dados geográficos dos municípios brasileiros.
 
