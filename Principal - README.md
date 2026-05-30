@@ -3,9 +3,7 @@
 Sistema distribuído composto por um servidor backend (Flask) e dois clientes (CLI e interface gráfica em PyQt5) para processamento de dados geográficos dos municípios brasileiros.
 
 ## 👥 Membros da Equipe
-* **Nome Completo 1** - R.A.: 000000
-* **Nome Completo 2** - R.A.: 000000
-* **Nome Completo 3** - R.A.: 000000
+* **Nome Completo: Arthur Silva Florentino ** *- R.A.: 2400220
 
 ## 🛠️ Arquitetura e Padrões Utilizados
 * **Servidor:** Factory Method, Command, Proxy
