@@ -112,5 +112,5 @@ Certifique-se de realizar o upload dos seguintes arquivos estruturados:
 ├── municipios.csv          <- Base de Dados Real dos Municípios Brasileiros
 ├── Servidor - README.md    <- Documentação arquitetural do servidor
 ├── Cliente - README.md     <- Documentação arquitetural do cliente
-└── README_REQUISITOS.txt   <- Este manual completo com os pré-requisitos
+└── requirements.txt        <- Este manual completo com os pré-requisitos
 ================================================================================
