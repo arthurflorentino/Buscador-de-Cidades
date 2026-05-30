@@ -7,7 +7,7 @@ from PyQt5.QtCore import Qt
 
 # Importamos a nossa interface gráfica
 from gui_client import BuscadorCidadesGUI, APIFacade
-
+ 
 # Instância global necessária para o PyQt
 app = QApplication(sys.argv)
 
