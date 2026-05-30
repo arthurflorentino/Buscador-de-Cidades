@@ -9,7 +9,7 @@ class TestIntegracaoServidor(unittest.TestCase):
         # Configura o cliente de teste do Flask
         self.app = app.test_client()
         self.app.testing = True
-        
+         
         # Injetamos dados controlados na memória para o teste ser previsível
         # Isso garante que o teste passe mesmo se o arquivo .csv não estiver presente
         CIDADES.clear()
